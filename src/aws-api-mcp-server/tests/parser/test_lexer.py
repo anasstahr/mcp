@@ -29,6 +29,9 @@ def test_split_cli_command_successfully(command, expected_tokens):
     [
         ('aws s3 && rm -rf', ProhibitedOperatorsError, ['&&']),
         ('aws s3 || rm -rf', ProhibitedOperatorsError, ['||']),
+        ('aws s3 ls ; cat /etc/passwd', ProhibitedOperatorsError, [';']),
+        ('aws s3 ls | cat /etc/passwd', ProhibitedOperatorsError, ['|']),
+        ('aws s3 ls & cat /etc/passwd', ProhibitedOperatorsError, ['&']),
         ('', CliParsingError, None),
         ('ecs rm', CliParsingError, 'The provided CLI command is not an AWS command'),
         ('aws s3 "', CliParsingError, 'No closing quotation'),
