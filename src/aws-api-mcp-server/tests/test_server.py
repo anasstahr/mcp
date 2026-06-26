@@ -876,6 +876,7 @@ def test_main_success_with_http_transport(
         host='0.0.0.0',
         port=8080,
         stateless_http=True,
+        uvicorn_config=None,
     )
 
 

@@ -37,6 +37,9 @@ from .core.common.config import (
     READ_ONLY_KEY,
     READ_OPERATIONS_ONLY_MODE,
     REQUIRE_MUTATION_CONSENT,
+    SSL_CA_CERTS,
+    SSL_CERTFILE,
+    SSL_KEYFILE,
     STATELESS_HTTP,
     TRANSPORT,
     WORKING_DIRECTORY,
@@ -449,11 +452,18 @@ def main():
             transport=TRANSPORT,
         )
     else:  # streamable-http or other HTTP transports
+        uvicorn_config = {}
+        if SSL_CERTFILE and SSL_KEYFILE:
+            uvicorn_config['ssl_certfile'] = SSL_CERTFILE
+            uvicorn_config['ssl_keyfile'] = SSL_KEYFILE
+            if SSL_CA_CERTS:
+                uvicorn_config['ssl_ca_certs'] = SSL_CA_CERTS
         server.run(
             transport=TRANSPORT,
             host=HOST,
             port=PORT,
             stateless_http=STATELESS_HTTP,
+            uvicorn_config=uvicorn_config if uvicorn_config else None,
         )
 
 
