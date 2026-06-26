@@ -177,7 +177,7 @@ Once the server is running, connect to it using the following configuration (ens
 }
 ```
 
-**Note**: Replace `127.0.0.1` with your custom host if you've set `AWS_API_MCP_HOST` to a different value.
+**Note**: Replace `127.0.0.1` with your custom host if you've set `AWS_API_MCP_HOST` to a different value. If you have configured TLS (see below), use `https://` instead of `http://`.
 
 ### 🔒 HTTP Mode Security Considerations
 
@@ -186,11 +186,19 @@ Once the server is running, connect to it using the following configuration (ens
 - **Single Customer Server**: This HTTP mode is intended for **single customer use only**. It is **NOT designed for multi-tenant environments** or serving multiple users simultaneously
 - **Authentication**: The server can be started with OAuth authentication, using `AUTH_TYPE=oauth`. Set `AUTH_TYPE=no-auth` to disable authentication if needed
 - **Network Security Controls**: Ensure proper network security controls are in place:
-  - Bind to localhost (`127.0.0.1`) when possible
+  - Bind to localhost (`127.0.0.1`) when possible — if binding to a non-loopback address, TLS is strongly recommended
   - Configure firewall rules to restrict access
-- **Encryption in Transit**: We **strongly recommend** adding encryption in transit when using HTTP mode:
-  - Use HTTPS with TLS/SSL certificates by setting `AWS_API_MCP_SSL_CERTFILE` and `AWS_API_MCP_SSL_KEYFILE`
-  - Avoid transmitting sensitive data over unencrypted HTTP connections
+- **Encryption in Transit**: If the server is accessible over a network, you **must** enable TLS to protect AWS credentials and tokens in transit. Configure TLS by setting `AWS_API_MCP_SSL_CERTFILE` and `AWS_API_MCP_SSL_KEYFILE`:
+
+  ```bash
+  AWS_API_MCP_TRANSPORT=streamable-http \
+  AUTH_TYPE=no-auth \
+  AWS_API_MCP_SSL_CERTFILE=/path/to/cert.pem \
+  AWS_API_MCP_SSL_KEYFILE=/path/to/key.pem \
+  uvx awslabs.aws-api-mcp-server@latest
+  ```
+
+  Then connect using `https://` in the MCP client URL. Unencrypted HTTP is only acceptable when binding exclusively to localhost (`127.0.0.1`).
 
 ## 🏗️ Self-host on AgentCore Runtime
 
