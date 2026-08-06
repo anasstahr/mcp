@@ -16,10 +16,25 @@ import shlex
 from ..common.errors import CliParsingError, ProhibitedOperatorsError
 
 
+# Tokens that are not valid AWS CLI syntax. Matching is done per-token after
+# shlex.split, so a quoted argument value that merely contains one of these
+# characters (e.g. --query 'Reservations[].Instances[] | [0]') is a single token
+# and is not affected.
+#
+# '<' is deliberately absent: DynamoDB shorthand argument values such as
+# --scan-filter and --filter-expression legitimately contain a bare '<', and
+# rejecting it here would mask the more specific shorthand parser error.
 excluded = frozenset(
     {
         '&&',
         '||',
+        ';',
+        '|',
+        '&',
+        '>',
+        '>>',
+        '2>',
+        '2>>',
         '=',
         '*=',
         '/=',

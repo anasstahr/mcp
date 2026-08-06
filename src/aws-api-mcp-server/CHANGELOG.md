@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Deprecation warning and feature flag to suppress (#4313)
 
+### Fixed
+
+- Bare `;`, `|`, `&`, `>`, `>>`, `2>` and `2>>` tokens are now rejected with a specific error
+  message instead of surfacing as a generic "unknown extra arguments" error from the CLI
+  argument parser. Matching is per-token, so quoted argument values that contain these
+  characters (such as JMESPath `--query` expressions) are unaffected.
+
 ## [1.3.47] - 2026-07-22
 
 ### Security
